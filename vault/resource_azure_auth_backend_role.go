@@ -82,6 +82,11 @@ func azureAuthBackendRoleResource() *schema.Resource {
 				return strings.Trim(v.(string), "/")
 			},
 		},
+		"metadata": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Comma-separated list of key=value pairs of metadata to be attached to the role on login",
+		},
 
 		// Deprecated
 		"ttl": {
@@ -162,6 +167,9 @@ func azureAuthBackendRoleCreate(d *schema.ResourceData, meta interface{}) error 
 	}
 	if v, ok := d.GetOk("policies"); ok {
 		data["policies"] = v.([]interface{})
+	}
+	if v, ok := d.GetOk("metadata"); ok {
+		data["metadata"] = v.(string)
 	}
 
 	if _, ok := d.GetOk("bound_service_principal_ids"); ok {
@@ -337,6 +345,10 @@ func azureAuthBackendRoleRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("bound_scale_sets", resp.Data["bound_scale_sets"])
 	}
 
+	if _, ok := d.GetOk("metadata"); ok {
+		d.Set("metadata", resp.Data["metadata"])
+	}
+
 	return nil
 }
 
@@ -361,6 +373,10 @@ func azureAuthBackendRoleUpdate(d *schema.ResourceData, meta interface{}) error 
 	}
 	if d.HasChange("policies") {
 		data["policies"] = d.Get("policies").([]interface{})
+	}
+
+	if d.HasChange("metadata") {
+		data["metadata"] = d.Get("metadata").(string)
 	}
 
 	if _, ok := d.GetOk("bound_service_principal_ids"); ok {

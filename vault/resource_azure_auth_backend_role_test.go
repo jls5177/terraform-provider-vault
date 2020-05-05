@@ -49,6 +49,8 @@ func TestAzureAuthBackendRole(t *testing.T) {
 						"token_max_ttl", "600"),
 					resource.TestCheckResourceAttr("vault_azure_auth_backend_role.test",
 						"token_policies.#", "2"),
+					resource.TestCheckResourceAttr("vault_azure_auth_backend_role.test",
+						"metadata", "key1=value,key2=value2"),
 				),
 			},
 			{
@@ -61,6 +63,8 @@ func TestAzureAuthBackendRole(t *testing.T) {
 						"token_max_ttl", "0"),
 					resource.TestCheckResourceAttr("vault_azure_auth_backend_role.test",
 						"token_policies.#", "0"),
+					resource.TestCheckResourceAttr("vault_azure_auth_backend_role.test",
+						"metadata", ""),
 				),
 			},
 		},
@@ -134,6 +138,7 @@ func testAzureAuthBackendRoleCheck_attrs(backend, name string) resource.TestChec
 			"bound_subscription_ids":      "bound_subscription_ids",
 			"bound_resource_groups":       "bound_resource_groups",
 			"bound_scale_sets":            "bound_scale_sets",
+			"metadata":                    "metadata",
 		}
 
 		for stateAttr, apiAttr := range attrs {
@@ -226,6 +231,7 @@ resource "vault_azure_auth_backend_role" "test" {
     token_ttl                   = 300
     token_max_ttl               = 600
     token_policies              = ["policy_a", "policy_b"]
+    metadata                     = "key=value"
 }
 `, backend, name)
 
@@ -248,6 +254,7 @@ resource "vault_azure_auth_backend_role" "test" {
     token_policies             = ["policy_a", "policy_b"]
     bound_locations	           = ["west us"]
     bound_resource_groups      = ["test"]
+    metadata                        = "key1=value,key2=value2"
 }
 `, backend, name)
 }

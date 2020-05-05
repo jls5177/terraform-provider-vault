@@ -76,6 +76,11 @@ func approleAuthBackendRoleResource() *schema.Resource {
 				return strings.Trim(v.(string), "/")
 			},
 		},
+		"metadata": {
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "Comma-separated list of key=value pairs of metadata to be attached to the role on login",
+		},
 
 		// Deprecated
 		"policies": {
@@ -135,6 +140,10 @@ func approleAuthBackendRoleUpdateFields(d *schema.ResourceData, data map[string]
 			data["secret_id_bound_cidrs"] = v.(*schema.Set).List()
 		}
 
+		if v, ok := d.GetOk("metadata"); ok {
+			data["metadata"] = v.(string)
+		}
+
 		// Deprecated Fields
 		if v, ok := d.GetOk("period"); ok {
 			data["period"] = v.(int)
@@ -162,6 +171,10 @@ func approleAuthBackendRoleUpdateFields(d *schema.ResourceData, data map[string]
 
 		if d.HasChange("secret_id_bound_cidrs") {
 			data["secret_id_bound_cidrs"] = d.Get("secret_id_bound_cidrs").(*schema.Set).List()
+		}
+
+		if d.HasChange("metadata") {
+			data["metadata"] = d.Get("metadata").(string)
 		}
 
 		// Deprecated Fields
@@ -275,7 +288,7 @@ func approleAuthBackendRoleRead(d *schema.ResourceData, meta interface{}) error 
 		}
 	}
 
-	for _, k := range []string{"bind_secret_id", "secret_id_num_uses", "secret_id_ttl", "policies", "period"} {
+	for _, k := range []string{"bind_secret_id", "secret_id_num_uses", "secret_id_ttl", "policies", "period", "metadata"} {
 		if err := d.Set(k, resp.Data[k]); err != nil {
 			return fmt.Errorf("error setting state key \"%s\": %s", k, err)
 		}

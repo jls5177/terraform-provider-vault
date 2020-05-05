@@ -46,6 +46,8 @@ func TestAccAppRoleAuthBackendRole_import(t *testing.T) {
 						"bind_secret_id", "false"),
 					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
 						"secret_id_bound_cidrs.#", "2"),
+					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
+						"metadata", "key1=value,key2=value2"),
 				),
 			},
 			{
@@ -251,6 +253,8 @@ func TestAccAppRoleAuthBackendRole_fullUpdate(t *testing.T) {
 						"bind_secret_id", "false"),
 					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
 						"secret_id_bound_cidrs.#", "2"),
+					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
+						"metadata", "key1=value,key2=value2"),
 				),
 			},
 			{
@@ -280,6 +284,8 @@ func TestAccAppRoleAuthBackendRole_fullUpdate(t *testing.T) {
 						"bind_secret_id", "true"),
 					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
 						"secret_id_bound_cidrs.#", "2"),
+					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
+						"metadata", "key1=value3,key2=value4"),
 				),
 			},
 			{
@@ -309,6 +315,8 @@ func TestAccAppRoleAuthBackendRole_fullUpdate(t *testing.T) {
 						"bind_secret_id", "true"),
 					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
 						"secret_id_bound_cidrs.#", "0"),
+					resource.TestCheckResourceAttr("vault_approle_auth_backend_role.role",
+						"metadata", ""),
 				),
 			},
 		},
@@ -453,6 +461,7 @@ resource "vault_approle_auth_backend_role" "role" {
   token_num_uses = 12
   token_ttl = 3600
   token_max_ttl = 7200
+  metadata = "key1=value,key2=value2"
 }`, backend, role, roleID)
 }
 
@@ -475,6 +484,7 @@ resource "vault_approle_auth_backend_role" "role" {
   token_num_uses = 24
   token_ttl = 7200
   token_max_ttl = 10800
+  metadata = "key1=value3,key2=value4"
 }`, backend, role, roleID)
 }
 func testAccAppRoleAuthBackendRoleConfig_deprecatedFull(backend, role, roleID string) string {
